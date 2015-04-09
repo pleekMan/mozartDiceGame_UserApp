@@ -11,10 +11,15 @@ public:
 	//CompasSelector();
 
 	void setup();
+	void reset();
 	void update();
 	void render();
 
 	CompasButton buttons[COMPAS_COUNT];
+	int activeColumn;
+
+	int getSelectedButton(int x, int y);
+	void setActiveColumn(int column);
 
 	void mouseDragged(int button);
 	void mouseMoved();

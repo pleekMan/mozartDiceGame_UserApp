@@ -1,7 +1,12 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxOsc.h"
 #include "CompasSelector/CompasSelector.h"
+
+#define HOST "localhost"
+#define SERVER_PORT 10000
+#define CLIENT_PORT 10001
 
 enum SceneState{
 	SCREENSAVER,
@@ -22,6 +27,9 @@ public:
 
 	CompasSelector compasSelector;
 
+	ofxOscSender netSender;
+	ofxOscReceiver netReciever;
+
 	void mousePressed(int x, int y, int button);
 	void mouseDragged(int button);
 	void mouseMoved();
@@ -29,6 +37,7 @@ public:
 
 private:
 
+	void checkNetMessages();
 
 };
 

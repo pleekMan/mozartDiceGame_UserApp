@@ -18,6 +18,7 @@ public:
 	ofImage image;
 
 	void setPosition(float _x, float _y);
+	void setSize(float _x, float _y);
 	void setActive(bool state);
 	void toggleActive();
 	bool isPointOver(ofPoint);
