@@ -53,7 +53,7 @@ void CompasSelector::render(){
 	{
 		buttons[i].render();
 	}
-
+	
 	// DRAW OVER INACTIVE COLUMNS
 	ofSetColor(255, 0, 0, 127);
 	ofFill();
@@ -92,6 +92,10 @@ int CompasSelector::getSelectedButton(int x, int y){
 
 void CompasSelector::setActiveColumn(int column){
 	activeColumn = column;
+}
+
+bool CompasSelector::finishedSelecting(){
+	return false;
 }
 
 void CompasSelector::mousePressed(int x, int y, int button)

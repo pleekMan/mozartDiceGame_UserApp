@@ -21,6 +21,9 @@ void ofApp::draw(){
 	
 	sceneManager.render();
 
+	ofSetColor(255, 0, 0);
+	ofDrawBitmapString(ofToString(ofGetMouseX()) + " | " + ofToString(ofGetMouseY()), ofGetMouseX() + 10, ofGetMouseY() - 10);
+
 }
 
 //--------------------------------------------------------------

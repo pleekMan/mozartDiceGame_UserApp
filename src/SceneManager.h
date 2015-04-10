@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxOsc.h"
+#include "ofxAnimatableFloat.h"
 #include "CompasSelector/CompasSelector.h"
 
 #define HOST "localhost"
@@ -29,6 +30,17 @@ public:
 
 	ofxOscSender netSender;
 	ofxOscReceiver netReciever;
+
+	int sceneState;
+	int prevSceneState;
+	ofFbo stateLayers[4];
+
+	ofxAnimatableFloat layerTransition;
+
+	ofImage splashScreen;
+	ofImage grillaCompases;
+
+	void setState(int state);
 
 	void mousePressed(int x, int y, int button);
 	void mouseDragged(int button);

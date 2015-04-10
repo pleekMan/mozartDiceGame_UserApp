@@ -21,6 +21,8 @@ public:
 	int getSelectedButton(int x, int y);
 	void setActiveColumn(int column);
 
+	bool finishedSelecting();
+
 	void mouseDragged(int button);
 	void mouseMoved();
 	void keyPressed(int key);
