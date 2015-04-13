@@ -4,6 +4,8 @@
 void ofApp::setup(){
 	
 	ofSetBackgroundAuto(true);
+	ofEnableAlphaBlending();
+	ofBlendMode(OF_BLENDMODE_ADD);
 	ofBackground(0);
 
 	sceneManager.setup();
@@ -18,7 +20,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
+	ofBackground(0);
 	sceneManager.render();
 
 	ofSetColor(255, 0, 0);

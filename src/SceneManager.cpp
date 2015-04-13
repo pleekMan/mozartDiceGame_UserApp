@@ -10,19 +10,25 @@ void SceneManager::setup(){
 	// SET LAYERS
 	for (int i = 0; i < 4; i++)
 	{
-		stateLayers[i].allocate(ofGetWindowWidth(), ofGetWindowHeight());
+		stateLayers[i].allocate(ofGetWindowWidth(), ofGetWindowHeight(), GL_RGB);
 		stateLayers[i].begin();
 		ofClear(0);
 		stateLayers[i].end();
 	}
 
-	layerTransition.setDuration(1.0);
+	layerTransition.setDuration(0.2);
 	layerTransition.setPercentDone(0.0);
 	layerTransition.reset(0.0);
 	layerTransition.setCurve(AnimCurve::EASE_IN_EASE_OUT);
 
 	splashScreen.loadImage("images/splashScreen.png");
 	grillaCompases.loadImage("images/grilla.png");
+
+	videoDidactico.loadMovie("videos/3 - ANIMACION.mov");
+	videoDidactico.setPaused(true);
+
+	partituraRecorrida.loadMovie("videos/4 - EJECUCION.mov");
+	partituraRecorrida.setPaused(true);
 
 	setState(0);
 
@@ -34,22 +40,22 @@ void SceneManager::update(){
 	layerTransition.update(1.0 / ofGetFrameRate());
 
 
-	// RENDER ONLY ACTUAL AND PREVIOUS LAYERS (UNTIL RANSITION IS FINISHED) (NOT STOPPING VIDEO)
+	// RENDER ONLY ACTUAL AND PREVIOUS LAYERS (UNTIL TRANSITION IS FINISHED) (NOT STOPPING VIDEO)
 	ofSetColor(255);
 
 	if (sceneState == SCREENSAVER || (prevSceneState == SCREENSAVER && layerTransition.isAnimating())){
 		stateLayers[SCREENSAVER].begin();
 		ofBackground(0);
-		splashScreen.draw(0, 0);
+		splashScreen.draw(0, 0, stateLayers[SCREENSAVER].getWidth(), stateLayers[SCREENSAVER].getHeight());
 
 		stateLayers[SCREENSAVER].end();
 	}
 
 	if (sceneState == SELECTION || (prevSceneState == SELECTION && layerTransition.isAnimating())){
 		stateLayers[SELECTION].begin();
-		ofBackground(0);
+		ofClear(0);
 
-		grillaCompases.draw(0, 0);
+		grillaCompases.draw(0, 0, stateLayers[SELECTION].getWidth(), stateLayers[SELECTION].getHeight());
 		compasSelector.render();
 
 		
@@ -57,9 +63,15 @@ void SceneManager::update(){
 
 	}
 	if (sceneState == VIDEO_EXPLAIN || (prevSceneState == VIDEO_EXPLAIN && layerTransition.isAnimating())){
+		
 		stateLayers[VIDEO_EXPLAIN].begin();
+
 		ofBackground(0);
 		
+		ofColor(255);
+		videoDidactico.update();
+		videoDidactico.draw(0, 0, stateLayers[VIDEO_EXPLAIN].getWidth(), stateLayers[VIDEO_EXPLAIN].getHeight());
+
 		stateLayers[VIDEO_EXPLAIN].end();
 
 	}
@@ -68,6 +80,10 @@ void SceneManager::update(){
 		stateLayers[EXECUTION].begin();
 		ofBackground(0);
 		
+		ofColor(255);
+		partituraRecorrida.update();
+		partituraRecorrida.draw(0, 0, stateLayers[EXECUTION].getWidth(), stateLayers[EXECUTION].getHeight());
+
 		stateLayers[EXECUTION].end();
 	}
 
@@ -76,11 +92,20 @@ void SceneManager::update(){
 
 void SceneManager::render(){
 	
-	ofSetColor(255);
-	stateLayers[prevSceneState].draw(0, 0, 1280, 720);
-	ofSetColor(255, 255.0 * layerTransition.getCurrentValue());
-	stateLayers[sceneState].draw(0, 0, 1280, 720);
+	//ofPushMatrix();
+	//ofScale(1.5, 1.5);
+	ofPushStyle();
 
+	ofSetColor(255,255);
+	stateLayers[prevSceneState].draw(0, 0);
+	ofSetColor(255, 255.0 * layerTransition.getCurrentValue());
+
+	stateLayers[sceneState].draw(0, 0);
+
+	ofPopStyle();
+
+	//ofDrawBitmapString(ofToString(layerTransition.getCurrentValue()), 20, 20);
+	//ofPopMatrix();
 }
 
 void SceneManager::checkNetMessages(){
@@ -126,11 +151,11 @@ void SceneManager::setState(int state){
 
 	else if (sceneState == VIDEO_EXPLAIN)
 	{
-
+		videoDidactico.play();
 	}
 	else if (sceneState == EXECUTION)
 	{
-		
+		partituraRecorrida.play();
 	}
 
 
@@ -141,7 +166,7 @@ void SceneManager::mousePressed(int x, int y, int button)
 	
 	if (sceneState == SCREENSAVER)
 	{
-		ofRectangle buttonArea = ofRectangle(ofPoint(350, 520), 650, 150);
+		ofRectangle buttonArea = ofRectangle(ofPoint(500, 780), 900, 300);
 		if (buttonArea.inside(x, y))
 		{
 			//setState(SELECTION);

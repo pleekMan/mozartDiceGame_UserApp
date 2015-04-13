@@ -5,7 +5,7 @@
 #include "ofxAnimatableFloat.h"
 #include "CompasSelector/CompasSelector.h"
 
-#define HOST "localhost"
+#define HOST "192.168.2.1"
 #define SERVER_PORT 10000
 #define CLIENT_PORT 10001
 
@@ -39,6 +39,9 @@ public:
 
 	ofImage splashScreen;
 	ofImage grillaCompases;
+
+	ofVideoPlayer videoDidactico;
+	ofVideoPlayer partituraRecorrida;
 
 	void setState(int state);
 

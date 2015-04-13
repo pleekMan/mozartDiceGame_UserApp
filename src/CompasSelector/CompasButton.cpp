@@ -19,6 +19,8 @@ void CompasButton::update(){
 void CompasButton::render(){
 
 	ofSetColor(0, 255, 0);
+	ofNoFill();
+	/*
 	if (active)
 	{
 		ofNoFill();
@@ -26,6 +28,7 @@ void CompasButton::render(){
 	else {
 		ofFill();
 	}
+	*/
 
 	ofRect(x, y, width, height);
 }

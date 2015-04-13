@@ -17,6 +17,8 @@ public:
 
 	CompasButton buttons[COMPAS_COUNT];
 	int activeColumn;
+	int selectedCompases[16];
+	ofImage selectionBox;
 
 	int getSelectedButton(int x, int y);
 	void setActiveColumn(int column);
@@ -29,6 +31,7 @@ public:
 	void mousePressed(int x, int y, int button);
 
 private:
+	void createGrid();
 
 
 };

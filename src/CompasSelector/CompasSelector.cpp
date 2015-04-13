@@ -2,19 +2,26 @@
 
 void CompasSelector::setup(){
 
-	// INIT BUTTONS
-	/*
-	for (int i = 0; i < COMPAS_COUNT; i++)
+	createGrid();
+
+	for (int i = 0; i < 16; i++)
 	{
-	buttons[i].setup(0.0, 0.0, "images/buttons/button_" + ofToString(i), i);
+		selectedCompases[i] = 0;
 	}
-	*/
+
+	selectionBox.loadImage("images/selectionBox.png");
+
+	reset();
+}
+
+void CompasSelector::createGrid(){
 
 	// POSITION BUTTONS
-	float initPosX = 10;
+	float initPosX = 156;
 	float posX = initPosX;
-	float posY = 10;
-	ofPoint buttonSize = ofPoint(50, 30);
+	float posY = 187;
+	float columnSpace = 17.25;
+	ofPoint buttonSize = ofPoint(89.3, 70.5);
 
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
@@ -29,13 +36,12 @@ void CompasSelector::setup(){
 			posY += buttonSize.y;
 		}
 		else {
-			posX += buttonSize.x;
+			posX += buttonSize.x + columnSpace;
 		}
 
 
 	}
 
-	reset();
 }
 
 void CompasSelector::reset(){
@@ -49,14 +55,22 @@ void CompasSelector::update(){
 }
 void CompasSelector::render(){
 
+	/*
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
 		buttons[i].render();
 	}
+	*/
+
+	ofPushStyle();
 	
 	// DRAW OVER INACTIVE COLUMNS
-	ofSetColor(255, 0, 0, 127);
+	ofSetColor(130,0,130, 75);
 	ofFill();
+	
+	//ofSetColor(255,5,5);
+	//ofNoFill();
+	
 	for (int i = 0; i < 16; i++){
 		if (i != activeColumn){
 			ofPoint pos = ofPoint(buttons[i].x, buttons[0].y);
@@ -65,6 +79,10 @@ void CompasSelector::render(){
 		}
 	}
 
+	ofSetColor(255);
+	selectionBox.draw(156 + activeColumn * (buttons[0].width + 17.25) - 33, 0);
+
+	ofPopStyle();
 
 }
 
