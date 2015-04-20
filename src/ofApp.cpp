@@ -5,7 +5,7 @@ void ofApp::setup(){
 	
 	ofSetBackgroundAuto(true);
 	ofEnableAlphaBlending();
-	ofBlendMode(OF_BLENDMODE_ADD);
+	//ofBlendMode(OF_BLENDMODE_ADD);
 	ofBackground(0);
 
 	sceneManager.setup();

@@ -3,7 +3,8 @@
 #include "ofMain.h"
 #include "CompasButton.h"
 
-#define COMPAS_COUNT 176
+#define COMPAS_COUNT 176 / 2
+#define COLUMNS 8
 
 class CompasSelector{
 
@@ -17,13 +18,15 @@ public:
 
 	CompasButton buttons[COMPAS_COUNT];
 	int activeColumn;
-	int selectedCompases[16];
+	int selectedCompases[COLUMNS];
 	ofImage selectionBox;
 
-	int getSelectedButton(int x, int y);
+	int getSelectedButton(int x, int y); // NOT USED
+	void saveSelectedButton(int x, int y); // CHECKS IF COLUMN IS ACTIVE, AND SAVES
 	void setActiveColumn(int column);
+	int getColumnCount();
 
-	bool finishedSelecting();
+	bool finishedSelecting;
 
 	void mouseDragged(int button);
 	void mouseMoved();
@@ -32,6 +35,7 @@ public:
 
 private:
 	void createGrid();
+	
 
 
 };

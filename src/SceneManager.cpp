@@ -2,6 +2,18 @@
 
 void SceneManager::setup(){
 
+
+	if (settings.loadFile("settings.xml"))
+	{
+		clientID = int(settings.getValue("USER_APP:clientID",0)); // ZERO IS FOR DEFAULT VALUE IF TREE NODE NOT FOUND
+	}
+	else {
+		clientID = 0;
+		cout << "--------- SETTINGS FILE NOT LOADED ---------" << endl;
+	}
+
+	loadContent(clientID);
+
 	compasSelector.setup();
 
 	netSender.setup(HOST, SERVER_PORT);
@@ -16,24 +28,35 @@ void SceneManager::setup(){
 		stateLayers[i].end();
 	}
 
-	layerTransition.setDuration(0.2);
+	layerTransition.setDuration(0.5);
 	layerTransition.setPercentDone(0.0);
 	layerTransition.reset(0.0);
 	layerTransition.setCurve(AnimCurve::EASE_IN_EASE_OUT);
 
+	
+
+	setState(0);
+
+
+}
+
+void SceneManager::loadContent(int client){
+
 	splashScreen.loadImage("images/splashScreen.png");
-	grillaCompases.loadImage("images/grilla.png");
+
+	string grilla = "images/grilla_" + ofToString(client) + ".png";
+	grillaCompases.loadImage(grilla);
+
+	grillaPreBox.loadImage("images/SelectionPreBox.png");
+	grillaPostBox.loadImage("images/SelectionPostBox.png");
 
 	videoDidactico.loadMovie("videos/3 - ANIMACION.mov");
 	videoDidactico.setPaused(true);
 
 	partituraRecorrida.loadMovie("videos/4 - EJECUCION.mov");
 	partituraRecorrida.setPaused(true);
-
-	setState(0);
-
-
 }
+
 void SceneManager::update(){
 
 	checkNetMessages();
@@ -58,6 +81,15 @@ void SceneManager::update(){
 		grillaCompases.draw(0, 0, stateLayers[SELECTION].getWidth(), stateLayers[SELECTION].getHeight());
 		compasSelector.render();
 
+		ofSetColor(255);
+		if (atPreSelection)
+		{
+			grillaPreBox.draw(0, 0);
+		}
+		else if (atPostSelection)
+		{
+			grillaPostBox.draw(0, 0);
+		}
 		
 		stateLayers[SELECTION].end();
 
@@ -115,17 +147,24 @@ void SceneManager::checkNetMessages(){
 		ofxOscMessage m;
 		netReciever.getNextMessage(&m);
 
+		cout << "RECEIVED MESSAGE WITH ADDRESS: " << m.getAddress() << endl;
+
 		if (m.getAddress() == "/goToState"){
-			cout << "GO TO STATE: " << ofToString(m.getArgAsInt32(0)) << endl;
-			setState(m.getArgAsInt32(0));
-			compasSelector.reset();
+			int incomingState = m.getArgAsInt32(0);
+			cout << "GO TO STATE: " << ofToString(incomingState) << endl;
+			
+			setState(incomingState);
+
+			//if(incomingState == SELECTION)compasSelector.reset();
 		}
 
+		/*
 		if (m.getAddress() == "/activeColumn"){
 			cout << "ACTIVE COLUMN: " << ofToString(m.getArgAsInt32(0)) << endl;
 
 			compasSelector.setActiveColumn(m.getArgAsInt32(0));
 		}
+		*/
 	}
 
 }
@@ -146,7 +185,10 @@ void SceneManager::setState(int state){
 
 	else if (sceneState == SELECTION)
 	{
-		
+		compasSelector.reset();
+
+		atPreSelection = true;
+		atPostSelection = false;
 	}
 
 	else if (sceneState == VIDEO_EXPLAIN)
@@ -160,6 +202,11 @@ void SceneManager::setState(int state){
 
 
 }
+
+void SceneManager::setClientID(int id){
+	clientID = id;
+}
+
 
 void SceneManager::mousePressed(int x, int y, int button)
 {
@@ -177,15 +224,60 @@ void SceneManager::mousePressed(int x, int y, int button)
 	}
 
 	if (sceneState == SELECTION){
+
+
+		if (atPreSelection)
+		{
+			atPreSelection = false;
+		}
+		else {
+			compasSelector.mousePressed(x, y, button);
+		}
+
+		// IF FINISHED SELECTING	
+		if (compasSelector.finishedSelecting){
+			ofxOscMessage sendCompas;
+			sendCompas.setAddress("/compasSelection");
+			sendCompas.addIntArg(clientID);
+			for (int i = 0; i < compasSelector.getColumnCount(); i++)
+			{
+				sendCompas.addIntArg(compasSelector.selectedCompases[i]);
+			}
+			netSender.sendMessage(sendCompas);
+			
+			atPostSelection = true;
+
+		}
+
 		// SEND -> SELECTED COMPASS
+
+		/*
 		int selectedCompas = compasSelector.getSelectedButton(x, y);
 		if (selectedCompas != -1)
 		{
 			ofxOscMessage sendCompas;
 			sendCompas.setAddress("/compasSelection");
+			sendCompas.addIntArg(clientID);
 			sendCompas.addIntArg(selectedCompas);
 			netSender.sendMessage(sendCompas);
+		
 		}
+		*/
+	}
+
+	if (sceneState == VIDEO_EXPLAIN){
+		// SEND -> SELECTED COMPASS
+			ofxOscMessage sendCompas;
+			sendCompas.setAddress("/goToState");
+			sendCompas.addIntArg(3);
+			netSender.sendMessage(sendCompas);
+	}
+	if (sceneState == EXECUTION){
+		// SEND -> SELECTED COMPASS
+			ofxOscMessage sendCompas;
+			sendCompas.setAddress("/goToState");
+			sendCompas.addIntArg(0);
+			netSender.sendMessage(sendCompas);
 	}
 	
 

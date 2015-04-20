@@ -4,11 +4,6 @@ void CompasSelector::setup(){
 
 	createGrid();
 
-	for (int i = 0; i < 16; i++)
-	{
-		selectedCompases[i] = 0;
-	}
-
 	selectionBox.loadImage("images/selectionBox.png");
 
 	reset();
@@ -30,7 +25,7 @@ void CompasSelector::createGrid(){
 
 		//cout << ofToString(buttons[i].x) + " - " + ofToString(buttons[i].y) << endl;
 
-		if (i % 16 == (16 - 1) && i > 1)
+		if (i % COLUMNS == (COLUMNS - 1) && i > 1)
 		{
 			posX = initPosX;
 			posY += buttonSize.y;
@@ -45,22 +40,31 @@ void CompasSelector::createGrid(){
 }
 
 void CompasSelector::reset(){
+
 	activeColumn = 0;
+	finishedSelecting = false;
+
 	for (int i = 0; i < COMPAS_COUNT; i++){
 		buttons[i].setActive(false);
 	}
+
+	for (int i = 0; i < COLUMNS; i++)
+	{
+		selectedCompases[i] = -1;
+	}
+
 }
 void CompasSelector::update(){
 
 }
 void CompasSelector::render(){
 
-	/*
+	
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
 		buttons[i].render();
 	}
-	*/
+	
 
 	ofPushStyle();
 	
@@ -71,7 +75,7 @@ void CompasSelector::render(){
 	//ofSetColor(255,5,5);
 	//ofNoFill();
 	
-	for (int i = 0; i < 16; i++){
+	for (int i = 0; i < COLUMNS; i++){
 		if (i != activeColumn){
 			ofPoint pos = ofPoint(buttons[i].x, buttons[0].y);
 			ofPoint size = ofPoint(buttons[0].width, buttons[0].height * 11);
@@ -86,17 +90,17 @@ void CompasSelector::render(){
 
 }
 
-int CompasSelector::getSelectedButton(int x, int y){
+int CompasSelector::getSelectedButton(int x, int y){ // NOT USED
 
 	int selected = -1;
 
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
 		// CHECK IF THE BUTTON PRESSED BELONGS TO THE ACTIVE COLUMN
-		if (i % 16 == activeColumn){
-			// CHECK POINER OVER BUTTON
+		if (i % COLUMNS == activeColumn){
+			// CHECK POINTER OVER BUTTON
 			if (buttons[i].isPointOver(ofPoint(x, y))){
-				buttons[i].toggleActive();
+				//buttons[i].toggleActive();
 				selected = i;
 				cout << "Button Pressed: " << ofToString(i) << endl;
 				break;
@@ -108,16 +112,51 @@ int CompasSelector::getSelectedButton(int x, int y){
 	return selected;
 }
 
+void CompasSelector::saveSelectedButton(int x, int y){
+
+	for (int i = 0; i < COMPAS_COUNT; i++)
+	{
+		// CHECK IF THE BUTTON PRESSED BELONGS TO THE ACTIVE COLUMN
+		if (i % COLUMNS == activeColumn){
+			// CHECK POINTER OVER BUTTON
+			if (buttons[i].isPointOver(ofPoint(x, y))){
+				buttons[i].toggleActive();
+				selectedCompases[activeColumn] = i;
+				
+				cout << "Button Pressed: " << ofToString(i) << endl;
+
+				if (activeColumn < COLUMNS - 1)
+				{
+					activeColumn++;
+				}
+				else {
+					activeColumn = 0;
+					finishedSelecting = true;
+				}
+
+				
+				break;
+			}
+		}
+	}
+
+}
+
 void CompasSelector::setActiveColumn(int column){
 	activeColumn = column;
 }
 
-bool CompasSelector::finishedSelecting(){
-	return false;
+int CompasSelector::getColumnCount(){
+	return COLUMNS;
 }
+
 
 void CompasSelector::mousePressed(int x, int y, int button)
 {
+
+	saveSelectedButton(x, y);
+
+	/*
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
 		if (buttons[i].isPointOver(ofPoint(ofGetMouseX(), ofGetMouseY()))){
@@ -125,6 +164,7 @@ void CompasSelector::mousePressed(int x, int y, int button)
 			break;
 		}
 	}
+	*/
 }
 
 void CompasSelector::mouseDragged(int button){

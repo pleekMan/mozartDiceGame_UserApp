@@ -3,11 +3,19 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "ofxAnimatableFloat.h"
+#include "ofxXmlSettings.h"
 #include "CompasSelector/CompasSelector.h"
 
-#define HOST "192.168.2.1"
-#define SERVER_PORT 10000
-#define CLIENT_PORT 10001
+#define LOCALHOST_NETWORK_CONFIG
+
+#ifdef LOCALHOST_NETWORK_CONFIG
+#define HOST "localhost"
+#else
+#define HOST "192.168.1.20" // BROADCAST IP
+#endif
+
+#define SERVER_PORT 12000
+#define CLIENT_PORT 12001
 
 enum SceneState{
 	SCREENSAVER,
@@ -26,6 +34,12 @@ public:
 	void update();
 	void render();
 
+	ofxXmlSettings settings;
+
+	int clientID; // WHICH USER SCREEN IS IT (DETERMINES GRID COMPASES AND IT'S BACKGROUND IMAGE)
+	void setClientID(int id);
+	void loadContent(int client);
+
 	CompasSelector compasSelector;
 
 	ofxOscSender netSender;
@@ -34,11 +48,15 @@ public:
 	int sceneState;
 	int prevSceneState;
 	ofFbo stateLayers[4];
+	bool atPreSelection;
+	bool atPostSelection;
 
 	ofxAnimatableFloat layerTransition;
 
 	ofImage splashScreen;
 	ofImage grillaCompases;
+	ofImage grillaPreBox;
+	ofImage grillaPostBox;
 
 	ofVideoPlayer videoDidactico;
 	ofVideoPlayer partituraRecorrida;
