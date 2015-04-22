@@ -6,6 +6,7 @@
 #include "ofxXmlSettings.h"	
 #include "CompasSelector/CompasSelector.h"
 
+/*
 //#define LOCALHOST_NETWORK_CONFIG
 
 #ifdef LOCALHOST_NETWORK_CONFIG
@@ -16,6 +17,7 @@
 
 #define SERVER_PORT 12000
 #define CLIENT_PORT 12001
+*/
 
 enum SceneState{
 	SCREENSAVER,

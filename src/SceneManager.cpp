@@ -1,23 +1,33 @@
 #include "SceneManager.h"
 
 void SceneManager::setup(){
-
-
+	
+	// LOAD SETTINGS -------------- BEGIN
 	if (settings.loadFile("settings.xml"))
 	{
-		clientID = int(settings.getValue("USER_APP:clientID",0)); // ZERO IS FOR DEFAULT VALUE IF TREE NODE NOT FOUND
+		clientID = int(settings.getValue("SETTINGS:clientID", 0)); // ZERO IS FOR DEFAULT VALUE IF TREE NODE NOT FOUND
+
+		string serverIP = settings.getValue("SETTINGS:serverIP", "192.168.1.10", 0);
+		int serverPort = settings.getValue("SETTINGS:servertPort", 12000, 0);
+		int clientsPort = settings.getValue("SETTINGS:clientPort", 12001, 0);
+
+		netSender.setup(serverIP, serverPort); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
+		netReciever.setup(clientsPort);
 	}
 	else {
 		clientID = 0;
-		cout << "--------- SETTINGS FILE NOT LOADED ---------" << endl;
+
+		netSender.setup("192.168.1.10", 12000); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
+		netReciever.setup(12001);
+
+		cout << "--------- SETTINGS FILE NOT LOADED, DEFAULTING ---------" << endl;
 	}
+
+	// LOAD SETTINGS -------------- END
 
 	loadContent(clientID);
 
 	compasSelector.setup();
-
-	netSender.setup(HOST, SERVER_PORT);
-	netReciever.setup(CLIENT_PORT);
 
 	// SET LAYERS
 	for (int i = 0; i < 4; i++)
@@ -47,11 +57,11 @@ void SceneManager::loadContent(int client){
 
 	//splashScreen.loadImage("images/splashScreen.png");
 
-	welcomeVideo.loadMovie("videos/1 - SCREENSAVER.mp4");
+	welcomeVideo.loadMovie("videos/1 - SCREENSAVER.mov");
 	welcomeVideo.setPaused(true);
 	buttonPressed.loadImage("images/welcomeButton.png");
 
-	videoDidactico.loadMovie("videos/3 - ANIMACION.mp4");
+	videoDidactico.loadMovie("videos/3 - ANIMACION.mov");
 	videoDidactico.setLoopState(OF_LOOP_NONE);
 	videoDidactico.play();
 	videoDidactico.setPaused(true);
