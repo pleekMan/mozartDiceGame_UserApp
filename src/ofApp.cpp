@@ -5,6 +5,7 @@ void ofApp::setup(){
 	
 	ofSetBackgroundAuto(true);
 	ofEnableAlphaBlending();
+	ofSetFrameRate(30);
 	//ofBlendMode(OF_BLENDMODE_ADD);
 	ofBackground(0);
 

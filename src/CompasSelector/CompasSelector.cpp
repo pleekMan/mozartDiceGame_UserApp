@@ -14,9 +14,9 @@ void CompasSelector::createGrid(){
 	// POSITION BUTTONS
 	float initPosX = 156;
 	float posX = initPosX;
-	float posY = 187;
-	float columnSpace = 17.25;
-	ofPoint buttonSize = ofPoint(89.3, 70.5);
+	float posY = 190;
+	float columnSpace = 35;
+	ofPoint buttonSize = ofPoint(180, 70.2);
 
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
@@ -59,17 +59,19 @@ void CompasSelector::update(){
 }
 void CompasSelector::render(){
 
-	
+	/*
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
 		buttons[i].render();
 	}
+	*/
 	
 
 	ofPushStyle();
 	
 	// DRAW OVER INACTIVE COLUMNS
-	ofSetColor(130,0,130, 75);
+	//ofSetColor(130, 0, 130, 75);
+	ofSetColor(0, 75);
 	ofFill();
 	
 	//ofSetColor(255,5,5);
@@ -84,7 +86,7 @@ void CompasSelector::render(){
 	}
 
 	ofSetColor(255);
-	selectionBox.draw(156 + activeColumn * (buttons[0].width + 17.25) - 33, 0);
+	selectionBox.draw(156 + activeColumn * (buttons[0].width + 35) - 47, 0);
 
 	ofPopStyle();
 

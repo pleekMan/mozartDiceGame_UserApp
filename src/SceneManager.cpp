@@ -28,12 +28,15 @@ void SceneManager::setup(){
 		stateLayers[i].end();
 	}
 
-	layerTransition.setDuration(0.5);
+	layerTransition.setDuration(1.0);
 	layerTransition.setPercentDone(0.0);
 	layerTransition.reset(0.0);
-	layerTransition.setCurve(AnimCurve::EASE_IN_EASE_OUT);
+	layerTransition.setCurve(EASE_IN_EASE_OUT);
 
-	
+	playHeadAnimation.setDuration(10.0);
+	playHeadAnimation.setPercentDone(0.0);
+	playHeadAnimation.reset(0.0);
+	playHeadAnimation.setCurve(LINEAR);
 
 	setState(0);
 
@@ -42,19 +45,32 @@ void SceneManager::setup(){
 
 void SceneManager::loadContent(int client){
 
-	splashScreen.loadImage("images/splashScreen.png");
+	//splashScreen.loadImage("images/splashScreen.png");
 
-	string grilla = "images/grilla_" + ofToString(client) + ".png";
+	welcomeVideo.loadMovie("videos/1 - SCREENSAVER.mp4");
+	welcomeVideo.setPaused(true);
+	buttonPressed.loadImage("images/welcomeButton.png");
+
+	videoDidactico.loadMovie("videos/3 - ANIMACION.mp4");
+	videoDidactico.setLoopState(OF_LOOP_NONE);
+	videoDidactico.play();
+	videoDidactico.setPaused(true);
+	
+
+	//partituraRecorrida.loadMovie("videos/4 - EJECUCION.mov");
+	//partituraRecorrida.setPaused(true);
+
+	string grilla = "images/grilla_" + ofToString(client) + ".jpg";
 	grillaCompases.loadImage(grilla);
 
-	grillaPreBox.loadImage("images/SelectionPreBox.png");
-	grillaPostBox.loadImage("images/SelectionPostBox.png");
+	grillaPreBox.loadImage("images/SelectionPreBox.jpg");
+	grillaPostBox.loadImage("images/SelectionPostBox.jpg");
 
-	videoDidactico.loadMovie("videos/3 - ANIMACION.mov");
-	videoDidactico.setPaused(true);
+	partituraFinal.loadImage("images/partitura.jpg");
+	playHeadImage.loadImage("images/playHead.png");
 
-	partituraRecorrida.loadMovie("videos/4 - EJECUCION.mov");
-	partituraRecorrida.setPaused(true);
+	font.loadFont("Conduit ITC Bold.ttf", 40, true, false, false, 0.0, 0.0);
+
 }
 
 void SceneManager::update(){
@@ -62,6 +78,7 @@ void SceneManager::update(){
 	checkNetMessages();
 	layerTransition.update(1.0 / ofGetFrameRate());
 
+	
 
 	// RENDER ONLY ACTUAL AND PREVIOUS LAYERS (UNTIL TRANSITION IS FINISHED) (NOT STOPPING VIDEO)
 	ofSetColor(255);
@@ -69,7 +86,14 @@ void SceneManager::update(){
 	if (sceneState == SCREENSAVER || (prevSceneState == SCREENSAVER && layerTransition.isAnimating())){
 		stateLayers[SCREENSAVER].begin();
 		ofBackground(0);
-		splashScreen.draw(0, 0, stateLayers[SCREENSAVER].getWidth(), stateLayers[SCREENSAVER].getHeight());
+		//splashScreen.draw(0, 0, stateLayers[SCREENSAVER].getWidth(), stateLayers[SCREENSAVER].getHeight());
+
+		welcomeVideo.update();
+		welcomeVideo.draw(0, 0, stateLayers[SCREENSAVER].getWidth(), stateLayers[SCREENSAVER].getHeight());
+
+		if (layerTransition.isAnimating() && sceneState == SELECTION){
+		buttonPressed.draw(494, 793);
+		}
 
 		stateLayers[SCREENSAVER].end();
 	}
@@ -103,7 +127,18 @@ void SceneManager::update(){
 		ofColor(255);
 		videoDidactico.update();
 		videoDidactico.draw(0, 0, stateLayers[VIDEO_EXPLAIN].getWidth(), stateLayers[VIDEO_EXPLAIN].getHeight());
+		
+		/*
+		if (videoDidactico.getIsMovieDone() && !videoDidactico.isPaused()){
+			videoDidactico.setPaused(true);
+			setState(EXECUTION);
+		}
+		*/
 
+		ofSetColor(100);
+		font.drawString("Probabilidad de la secuencia elegida: ", 190, 780);
+		font.drawString(ofToString(randomNumber) + " en 45.949.729.863.572.161", 190, 830);
+		
 		stateLayers[VIDEO_EXPLAIN].end();
 
 	}
@@ -113,8 +148,26 @@ void SceneManager::update(){
 		ofBackground(0);
 		
 		ofColor(255);
-		partituraRecorrida.update();
-		partituraRecorrida.draw(0, 0, stateLayers[EXECUTION].getWidth(), stateLayers[EXECUTION].getHeight());
+		partituraFinal.draw(0, 0);
+
+		// PLAYHEAD ANIMATION - BEGIN ---------------------------------
+		playHeadAnimation.update(1.0 / ofGetFrameRate());
+
+		float totalPartituraLength = 3350;
+		float playHeadX = 40 + (totalPartituraLength * playHeadAnimation.getCurrentValue()); // initOffset + (totalPartituraLength * anim)
+		float playHeadY = 300;
+
+		if (playHeadAnimation.getCurrentValue() > 0.5){
+			playHeadY = 550;
+			playHeadX -= totalPartituraLength * 0.5;
+		}
+
+		//cout << ofToString(playHeadAnimation.getCurrentValue()) << endl;
+
+		playHeadImage.draw(playHeadX, playHeadY);
+
+		// PLAYHEAD ANIMATION - END ---------------------------------
+
 
 		stateLayers[EXECUTION].end();
 	}
@@ -180,7 +233,7 @@ void SceneManager::setState(int state){
 
 	if (sceneState == SCREENSAVER)
 	{
-		
+		welcomeVideo.play();
 	}
 
 	else if (sceneState == SELECTION)
@@ -193,11 +246,19 @@ void SceneManager::setState(int state){
 
 	else if (sceneState == VIDEO_EXPLAIN)
 	{
-		videoDidactico.play();
+		videoDidactico.setFrame(0);
+		videoDidactico.setPaused(false);
+
+		randomNumber = int(ofRandom(100, 1000));
+		
 	}
 	else if (sceneState == EXECUTION)
 	{
-		partituraRecorrida.play();
+		//partituraRecorrida.play();
+		playHeadAnimation.setPercentDone(0.0);
+		playHeadAnimation.reset(0.0);
+		playHeadAnimation.animateTo(1.0);
+		
 	}
 
 
@@ -266,6 +327,11 @@ void SceneManager::mousePressed(int x, int y, int button)
 	}
 
 	if (sceneState == VIDEO_EXPLAIN){
+
+		//videoDidactico.setPaused(false);
+		videoDidactico.setFrame(0);
+		//videoDidactico.play();
+
 		// SEND -> SELECTED COMPASS
 			ofxOscMessage sendCompas;
 			sendCompas.setAddress("/goToState");
@@ -299,7 +365,6 @@ void SceneManager::keyPressed(int key){
 	if (key == '0'){
 		setState(SCREENSAVER);
 	}
-
 	if (key == '1'){
 		setState(SELECTION);
 	}

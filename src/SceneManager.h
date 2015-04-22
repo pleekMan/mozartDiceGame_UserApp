@@ -3,15 +3,15 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "ofxAnimatableFloat.h"
-#include "ofxXmlSettings.h"
+#include "ofxXmlSettings.h"	
 #include "CompasSelector/CompasSelector.h"
 
-#define LOCALHOST_NETWORK_CONFIG
+//#define LOCALHOST_NETWORK_CONFIG
 
 #ifdef LOCALHOST_NETWORK_CONFIG
 #define HOST "localhost"
 #else
-#define HOST "192.168.1.20" // BROADCAST IP
+#define HOST "192.168.1.10" // BROADCAST IP
 #endif
 
 #define SERVER_PORT 12000
@@ -53,13 +53,24 @@ public:
 
 	ofxAnimatableFloat layerTransition;
 
-	ofImage splashScreen;
+	ofVideoPlayer welcomeVideo;
+	ofImage buttonPressed;
+
+	//ofImage splashScreen;
 	ofImage grillaCompases;
 	ofImage grillaPreBox;
 	ofImage grillaPostBox;
+	
 
 	ofVideoPlayer videoDidactico;
-	ofVideoPlayer partituraRecorrida;
+	//ofVideoPlayer partituraRecorrida;
+
+	ofTrueTypeFont font;
+	int randomNumber;
+
+	ofImage partituraFinal;
+	ofImage playHeadImage;
+	ofxAnimatableFloat playHeadAnimation;
 
 	void setState(int state);
 
