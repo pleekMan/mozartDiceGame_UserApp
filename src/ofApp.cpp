@@ -52,7 +52,9 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+	cout << "In ofAppMousePRessed - Top" << endl;
 	sceneManager.mousePressed(x, y, button);
+	cout << "In ofAppMousePRessed - Bottom" << endl;
 }
 
 //--------------------------------------------------------------

@@ -14,6 +14,7 @@ public:
 	int id;
 	float x, y, width, height;
 	bool active;
+	bool isSelected;
 
 	ofImage image;
 

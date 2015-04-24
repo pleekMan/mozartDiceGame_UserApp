@@ -17,14 +17,17 @@ public:
 	void render();
 
 	CompasButton buttons[COMPAS_COUNT];
+	ofPoint buttonSize;
 	int activeColumn;
 	int selectedCompases[COLUMNS];
 	ofImage selectionBox;
+	//ofPoint selectedCompasesPos[COLUMNS];
 
 	int getSelectedButton(int x, int y); // NOT USED
 	void saveSelectedButton(int x, int y); // CHECKS IF COLUMN IS ACTIVE, AND SAVES
 	void setActiveColumn(int column);
 	int getColumnCount();
+	void toggleActiveColumn(int activeColumn);
 
 	bool finishedSelecting;
 

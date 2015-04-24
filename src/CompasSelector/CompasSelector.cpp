@@ -16,13 +16,12 @@ void CompasSelector::createGrid(){
 	float posX = initPosX;
 	float posY = 190;
 	float columnSpace = 35;
-	ofPoint buttonSize = ofPoint(180, 70.2);
+	buttonSize = ofPoint(180, 70.2);
 
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
 		buttons[i].setPosition(posX, posY);
 		buttons[i].setSize(buttonSize.x, buttonSize.y);
-
 		//cout << ofToString(buttons[i].x) + " - " + ofToString(buttons[i].y) << endl;
 
 		if (i % COLUMNS == (COLUMNS - 1) && i > 1)
@@ -37,6 +36,13 @@ void CompasSelector::createGrid(){
 
 	}
 
+	// INIT INDIVIDUAL SELECTED COMPASES POSITION (1 PER COLUMN) FOR HIGHLIGHTING
+	/*
+	for (int i = 0; i < COLUMNS; i++)
+	{
+		selectedCompasesPos[i] = ofPoint(buttons[i].x, buttons[i].y);
+	}
+	*/
 }
 
 void CompasSelector::reset(){
@@ -45,12 +51,21 @@ void CompasSelector::reset(){
 	finishedSelecting = false;
 
 	for (int i = 0; i < COMPAS_COUNT; i++){
-		buttons[i].setActive(false);
+		if (i % COLUMNS == activeColumn){
+			buttons[i].setActive(true);
+		} else{
+			buttons[i].setActive(false);
+		}
+
+		buttons[i].isSelected = false;
 	}
+
 
 	for (int i = 0; i < COLUMNS; i++)
 	{
 		selectedCompases[i] = -1;
+		//selectedCompasesPos[i] = ofPoint(buttons[i].x, buttons[i].y);
+		
 	}
 
 }
@@ -59,14 +74,9 @@ void CompasSelector::update(){
 }
 void CompasSelector::render(){
 
-	/*
-	for (int i = 0; i < COMPAS_COUNT; i++)
-	{
-		buttons[i].render();
-	}
-	*/
 	
-
+	for (int i = 0; i < COMPAS_COUNT; i++)buttons[i].render();
+	
 	ofPushStyle();
 	
 	// DRAW OVER INACTIVE COLUMNS
@@ -74,17 +84,22 @@ void CompasSelector::render(){
 	ofSetColor(0, 75);
 	ofFill();
 	
-	//ofSetColor(255,5,5);
-	//ofNoFill();
+	/*
+	// DRAWING COLUMNS HIGHLIGHTERS (TOP AND BOTTOM SHADOW BOXES)
 	
 	for (int i = 0; i < COLUMNS; i++){
 		if (i != activeColumn){
-			ofPoint pos = ofPoint(buttons[i].x, buttons[0].y);
-			ofPoint size = ofPoint(buttons[0].width, buttons[0].height * 11);
-			ofRect(pos, size.x, size.y);
+			ofPoint posTop = ofPoint(selectedCompasesPos[i].x, buttons[0].y);
+			ofPoint sizeTop = ofPoint(buttonSize.x, selectedCompasesPos[i].y - buttons[0].y);
+			ofRect(posTop, sizeTop.x, sizeTop.y);
+
+			ofPoint posBottom = ofPoint(selectedCompasesPos[i].x, selectedCompasesPos[i].y + buttonSize.y);
+			ofPoint sizeBottom = ofPoint(buttonSize.x, (buttonSize.y * 11) - (selectedCompasesPos[i].y - buttonSize.y));
+			ofRect(posBottom, sizeBottom.x, sizeBottom.y);
 		}
 	}
-
+	*/
+	
 	ofSetColor(255);
 	selectionBox.draw(156 + activeColumn * (buttons[0].width + 35) - 47, 0);
 
@@ -122,26 +137,57 @@ void CompasSelector::saveSelectedButton(int x, int y){
 		if (i % COLUMNS == activeColumn){
 			// CHECK POINTER OVER BUTTON
 			if (buttons[i].isPointOver(ofPoint(x, y))){
-				buttons[i].toggleActive();
+				buttons[i].isSelected = true;
+
+
 				selectedCompases[activeColumn] = i;
-				
-				cout << "Button Pressed: " << ofToString(i) << endl;
+
+				//selectedCompasesPos[activeColumn] = ofPoint(buttons[i].x, buttons[i].y);
+
+
+				//cout << "Button Pressed: " << ofToString(i) << endl;
 
 				if (activeColumn < COLUMNS - 1)
 				{
 					activeColumn++;
+
 				}
 				else {
 					activeColumn = 0;
 					finishedSelecting = true;
 				}
 
-				
+				toggleActiveColumn(activeColumn);
+
+
+
 				break;
 			}
 		}
 	}
 
+	for (int i = 0; i < COMPAS_COUNT; i++)
+	{
+		cout << ofToString(buttons[i].active) << ":" << ofToString(buttons[i].isSelected) << " - ";
+		if (i % COLUMNS == 7){
+			cout << endl;
+		}
+	}
+
+}
+
+void CompasSelector::toggleActiveColumn(int column){
+
+	for (int i = 0; i < COMPAS_COUNT; i++)
+	{
+		if (i % COLUMNS == column)
+		{
+			buttons[i].setActive(true);
+		}
+		else {
+			buttons[i].setActive(false);
+		}
+	}
 }
 
 void CompasSelector::setActiveColumn(int column){

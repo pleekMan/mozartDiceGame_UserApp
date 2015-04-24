@@ -12,14 +12,25 @@ void CompasButton::setup(float posX, float posY, string imagePath, int _id){
 	width = 2;
 	height = 2;
 
+	isSelected = false;
+
 }
 void CompasButton::update(){
 
 }
 void CompasButton::render(){
 
-	ofSetColor(0, 255, 0);
-	ofNoFill();
+		if (!isSelected && !active){
+			ofSetColor(100,0,100, 100);
+			ofFill();
+		}
+		else {
+			ofSetColor(0, 0);
+			ofFill();
+		}
+	
+	
+	//ofNoFill();
 	/*
 	if (active)
 	{
