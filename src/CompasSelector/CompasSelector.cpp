@@ -155,6 +155,7 @@ void CompasSelector::saveSelectedButton(int x, int y){
 				else {
 					activeColumn = 0;
 					finishedSelecting = true;
+					cout << "CompasSelector Finished Selecting" << endl;
 				}
 
 				toggleActiveColumn(activeColumn);

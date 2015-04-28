@@ -43,7 +43,7 @@ void SceneManager::setup(){
 	layerTransition.reset(0.0);
 	layerTransition.setCurve(EASE_IN_EASE_OUT);
 
-	playHeadAnimation.setDuration(10.0);
+	playHeadAnimation.setDuration(20.0);
 	playHeadAnimation.setPercentDone(0.0);
 	playHeadAnimation.reset(0.0);
 	playHeadAnimation.setCurve(LINEAR);
@@ -79,7 +79,7 @@ void SceneManager::loadContent(int client){
 	partituraFinal.loadImage("images/partitura.jpg");
 	playHeadImage.loadImage("images/playHead.png");
 
-	font.loadFont("Conduit ITC Bold.ttf", 40, true, false, false, 0.0, 0.0);
+	font.loadFont("Conduit ITC Bold.ttf", 30, true, false, false, 0.0, 0.0);
 
 }
 
@@ -145,9 +145,11 @@ void SceneManager::update(){
 		}
 		*/
 
-		ofSetColor(100);
-		font.drawString("Probabilidad de la secuencia elegida: ", 190, 780);
-		font.drawString(ofToString(randomNumber) + " en 45.949.729.863.572.161", 190, 830);
+		if (videoDidactico.getPosition() > 0.2){
+			ofSetColor(100);
+			font.drawString("Probabilidad de la secuencia elegida: ", 220, 740);
+			font.drawString(ofToString(randomNumber) + " en 45.949.729.863.572.161", 240, 790);
+		}
 		
 		stateLayers[VIDEO_EXPLAIN].end();
 
@@ -219,6 +221,12 @@ void SceneManager::checkNetMessages(){
 			setState(incomingState);
 
 			//if(incomingState == SELECTION)compasSelector.reset();
+		}
+
+		if (sceneState == SELECTION){
+			if (m.getAddress() == "/unlockScreen" && clientID == 1){
+				atPreSelection = false;
+			}
 		}
 
 		/*
@@ -296,13 +304,20 @@ void SceneManager::mousePressed(int x, int y, int button)
 
 	if (sceneState == SELECTION){
 
-
-		if (atPreSelection)
-		{
-			atPreSelection = false;
+		if (clientID == 0){
+			if (atPreSelection)
+			{
+				atPreSelection = false;
+			}
+			else {
+				compasSelector.mousePressed(x, y, button);
+			}
 		}
 		else {
-			compasSelector.mousePressed(x, y, button);
+			if (!atPreSelection)
+			{
+				compasSelector.mousePressed(x, y, button);
+			}
 		}
 
 		// IF FINISHED SELECTING	
@@ -315,7 +330,8 @@ void SceneManager::mousePressed(int x, int y, int button)
 				sendCompas.addIntArg(compasSelector.selectedCompases[i]);
 			}
 			netSender.sendMessage(sendCompas);
-			
+			cout << "COMPASES SELECTED MESSAGE SENT" << endl;
+
 			atPostSelection = true;
 
 		}
