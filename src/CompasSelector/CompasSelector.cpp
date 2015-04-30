@@ -1,15 +1,15 @@
 #include "CompasSelector.h"
 
-void CompasSelector::setup(){
+void CompasSelector::setup(int clientID){
 
-	createGrid();
+	createGrid(clientID);
 
 	selectionBox.loadImage("images/selectionBox.png");
 
 	reset();
 }
 
-void CompasSelector::createGrid(){
+void CompasSelector::createGrid(int clientID){
 
 	// POSITION BUTTONS
 	float initPosX = 156;
@@ -18,10 +18,47 @@ void CompasSelector::createGrid(){
 	float columnSpace = 35;
 	buttonSize = ofPoint(180, 70.2);
 
+	// CREATING BUTTONS AND LOADING IMAGES FOR THIS GRID
+	// GET THE INDEX OUT OF A PRERENDERED INDEX FILE
+	ofBuffer compasImageIndex = ofBufferFromFile("grillaMozart.txt", true);
+
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
 		buttons[i].setPosition(posX, posY);
 		buttons[i].setSize(buttonSize.x, buttonSize.y);
+
+		//BUTTON LOADING DEPENDS ON THE CLIENT ID
+		if (clientID == 0){
+			// GET NUMS AS STRINGS FROM FILE
+			string lineInBuffer = "images/compases/" + compasImageIndex.getNextLine() + ".jpg";
+			buttons[i].setImage(lineInBuffer);
+			cout << " : " << lineInBuffer << endl;
+
+			// WHEN REACHING MAX COLUMN, RETRIEVE FROM FILE THE NEXT 8 LINES, BUT DISCARD THEM (JUST TO BURN getNextLine()s)
+			if (i % COLUMNS > COLUMNS - 2){
+				cout << "--" << endl;
+				for (int i = 0; i<COLUMNS; i++){
+					compasImageIndex.getNextLine();
+				}
+			}
+		}
+		else {
+
+			// ON CLIENT 1, DISCARDING FILE LINES SHOULD BE DONE BEFORE RETRIEVING THE USEFUL NUMBER
+			if (i % COLUMNS == 0){
+				cout << "--" << endl;
+				for (int i = 0; i<COLUMNS; i++){
+					compasImageIndex.getNextLine();
+				}
+			}
+
+			string lineInBuffer = "images/compases/" + compasImageIndex.getNextLine() + ".jpg";
+			buttons[i].setImage(lineInBuffer);
+			cout << " : " << lineInBuffer << endl;
+
+			
+		}
+
 		//cout << ofToString(buttons[i].x) + " - " + ofToString(buttons[i].y) << endl;
 
 		if (i % COLUMNS == (COLUMNS - 1) && i > 1)

@@ -20,6 +20,7 @@ public:
 
 	void setPosition(float _x, float _y);
 	void setSize(float _x, float _y);
+	void setImage(string path);
 	void setActive(bool state);
 	void toggleActive();
 	bool isPointOver(ofPoint);

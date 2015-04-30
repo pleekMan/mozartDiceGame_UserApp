@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "CompasButton.h"
 
-#define COMPAS_COUNT 176 / 2
+#define COMPAS_COUNT 176 / 2 // EACH SCREEN HAS 8 OUT OF THE 16 COLUMNS
 #define COLUMNS 8
 
 class CompasSelector{
@@ -11,7 +11,7 @@ class CompasSelector{
 public:
 	//CompasSelector();
 
-	void setup();
+	void setup(int clientID);
 	void reset();
 	void update();
 	void render();
@@ -37,7 +37,7 @@ public:
 	void mousePressed(int x, int y, int button);
 
 private:
-	void createGrid();
+	void createGrid(int clientID);
 	
 
 

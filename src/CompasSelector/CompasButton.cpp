@@ -2,6 +2,8 @@
 
 void CompasButton::setup(float posX, float posY, string imagePath, int _id){
 
+	// NOT USED !!!
+
 	id = _id;
 
 	x = posX;
@@ -20,14 +22,17 @@ void CompasButton::update(){
 }
 void CompasButton::render(){
 
-		if (!isSelected && !active){
-			ofSetColor(100,0,100, 100);
-			ofFill();
-		}
-		else {
-			ofSetColor(0, 0);
-			ofFill();
-		}
+	ofSetColor(255);
+	image.draw(x, y);
+
+	if (!isSelected && !active){
+		ofSetColor(100,0,100, 100);
+		ofFill();
+	}
+	else {
+		ofSetColor(0, 0);
+		ofFill();
+	}
 	
 	
 	//ofNoFill();
@@ -52,6 +57,10 @@ void CompasButton::setPosition(float _x, float _y){
 void CompasButton::setSize(float _x, float _y){
 	width = _x;
 	height = _y;
+}
+
+void CompasButton::setImage(string path){
+	image.loadImage(path);
 }
 
 void CompasButton::setActive(bool state){

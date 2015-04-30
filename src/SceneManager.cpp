@@ -15,7 +15,7 @@ void SceneManager::setup(){
 		netReciever.setup(clientsPort);
 	}
 	else {
-		clientID = 1;
+		clientID = 0;
 
 		//netSender.setup("localhost", 12001);
 		netSender.setup("192.168.1.10", 12000); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
@@ -28,7 +28,7 @@ void SceneManager::setup(){
 
 	loadContent(clientID);
 
-	compasSelector.setup();
+	compasSelector.setup(clientID);
 
 	// SET LAYERS
 	for (int i = 0; i < 4; i++)
@@ -408,6 +408,13 @@ void SceneManager::keyPressed(int key){
 	}
 	if (key == '3'){
 		setState(EXECUTION);
+	}
+
+
+	if (key == 's'){
+		if (clientID == 1){
+			atPreSelection = false;
+		}
 	}
 
 }
