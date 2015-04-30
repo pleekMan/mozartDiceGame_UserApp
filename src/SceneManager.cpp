@@ -15,8 +15,9 @@ void SceneManager::setup(){
 		netReciever.setup(clientsPort);
 	}
 	else {
-		clientID = 0;
+		clientID = 1;
 
+		//netSender.setup("localhost", 12001);
 		netSender.setup("192.168.1.10", 12000); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
 		netReciever.setup(12001);
 
@@ -43,7 +44,7 @@ void SceneManager::setup(){
 	layerTransition.reset(0.0);
 	layerTransition.setCurve(EASE_IN_EASE_OUT);
 
-	playHeadAnimation.setDuration(20.0);
+	playHeadAnimation.setDuration(35.0);
 	playHeadAnimation.setPercentDone(0.0);
 	playHeadAnimation.reset(0.0);
 	playHeadAnimation.setCurve(LINEAR);
@@ -73,11 +74,17 @@ void SceneManager::loadContent(int client){
 	string grilla = "images/grilla_" + ofToString(client) + ".jpg";
 	grillaCompases.loadImage(grilla);
 
-	grillaPreBox.loadImage("images/SelectionPreBox.jpg");
+	if (clientID == 0){
+		grillaPreBox.loadImage("images/SelectionPreBox_A.jpg");
+	}
+	else {
+		grillaPreBox.loadImage("images/SelectionPreBox_B.jpg");
+	}
 	grillaPostBox.loadImage("images/SelectionPostBox.jpg");
 
 	partituraFinal.loadImage("images/partitura.jpg");
 	playHeadImage.loadImage("images/playHead.png");
+	returnButton.loadImage("images/returnButton.png");
 
 	font.loadFont("Conduit ITC Bold.ttf", 30, true, false, false, 0.0, 0.0);
 
@@ -179,6 +186,8 @@ void SceneManager::update(){
 		playHeadImage.draw(playHeadX, playHeadY);
 
 		// PLAYHEAD ANIMATION - END ---------------------------------
+
+		returnButton.draw(0, 0);
 
 
 		stateLayers[EXECUTION].end();

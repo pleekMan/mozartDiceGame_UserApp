@@ -73,6 +73,7 @@ public:
 	ofImage partituraFinal;
 	ofImage playHeadImage;
 	ofxAnimatableFloat playHeadAnimation;
+	ofImage returnButton;
 
 	void setState(int state);
 
