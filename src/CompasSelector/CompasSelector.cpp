@@ -27,9 +27,9 @@ void CompasSelector::createGrid(int clientID){
 		buttons[i].setPosition(posX, posY);
 		buttons[i].setSize(buttonSize.x, buttonSize.y);
 
-		//BUTTON LOADING DEPENDS ON THE CLIENT ID
+		//BUTTON LOADING DEPENDS ON THE CLIENT ID (TO AVOID LOADING UNNECESARY BUTTON (DOUBLE));
 		if (clientID == 0){
-			// GET NUMS AS STRINGS FROM FILE
+			// GET NUM AS STRINGS FROM FILE
 			string lineInBuffer = "images/compases/" + compasImageIndex.getNextLine() + ".jpg";
 			buttons[i].setImage(lineInBuffer);
 			cout << " : " << lineInBuffer << endl;
@@ -59,8 +59,8 @@ void CompasSelector::createGrid(int clientID){
 			
 		}
 
-		//cout << ofToString(buttons[i].x) + " - " + ofToString(buttons[i].y) << endl;
 
+		// RESET BUTTON POS ON GRID END
 		if (i % COLUMNS == (COLUMNS - 1) && i > 1)
 		{
 			posX = initPosX;
@@ -73,13 +73,6 @@ void CompasSelector::createGrid(int clientID){
 
 	}
 
-	// INIT INDIVIDUAL SELECTED COMPASES POSITION (1 PER COLUMN) FOR HIGHLIGHTING
-	/*
-	for (int i = 0; i < COLUMNS; i++)
-	{
-		selectedCompasesPos[i] = ofPoint(buttons[i].x, buttons[i].y);
-	}
-	*/
 }
 
 void CompasSelector::reset(){
@@ -197,8 +190,6 @@ void CompasSelector::saveSelectedButton(int x, int y){
 
 				toggleActiveColumn(activeColumn);
 
-
-
 				break;
 			}
 		}
@@ -235,6 +226,8 @@ void CompasSelector::setActiveColumn(int column){
 int CompasSelector::getColumnCount(){
 	return COLUMNS;
 }
+
+
 
 
 void CompasSelector::mousePressed(int x, int y, int button)

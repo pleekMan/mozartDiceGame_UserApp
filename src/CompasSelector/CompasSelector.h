@@ -3,8 +3,8 @@
 #include "ofMain.h"
 #include "CompasButton.h"
 
-#define COMPAS_COUNT 176 / 2 // EACH SCREEN HAS 8 OUT OF THE 16 COLUMNS
-#define COLUMNS 8
+#define COMPAS_COUNT 176 / 2 // EACH SCREEN HAS A GRID WITH HALF THE COMPASES
+#define COLUMNS 8 // EACH SCREEN HAS 8 OUT OF THE 16 COLUMNS
 
 class CompasSelector{
 
@@ -15,6 +15,11 @@ public:
 	void reset();
 	void update();
 	void render();
+
+	ofImage& getButtonImage(int column){
+		if (column < COLUMNS)
+			return buttons[selectedCompases[column]].image;
+	};
 
 	CompasButton buttons[COMPAS_COUNT];
 	ofPoint buttonSize;
@@ -28,6 +33,8 @@ public:
 	void setActiveColumn(int column);
 	int getColumnCount();
 	void toggleActiveColumn(int activeColumn);
+
+	
 
 	bool finishedSelecting;
 

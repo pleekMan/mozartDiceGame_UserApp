@@ -169,6 +169,13 @@ void SceneManager::update(){
 		ofColor(255);
 		partituraFinal.draw(0, 0);
 
+		// DRAW PARTITURA COMPASES FROM CompasButtons IMAGES
+		int imageWidth = 100;
+		for (int i = 0; i < 8; i++)
+		{
+			compasSelector.getButtonImage(i).draw(imageWidth * i, 0);
+		}
+
 		// PLAYHEAD ANIMATION - BEGIN ---------------------------------
 		playHeadAnimation.update(1.0 / ofGetFrameRate());
 
