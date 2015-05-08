@@ -17,11 +17,11 @@ void SceneManager::setup(){
 	else {
 		clientID = 0;
 
-		//netSender.setup("localhost", 12001);
-		netSender.setup("192.168.1.10", 12000); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
+		netSender.setup("localhost", 12000);
+		//netSender.setup("192.168.1.10", 12000); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
 		netReciever.setup(12001);
 
-		cout << "--------- SETTINGS FILE NOT LOADED, DEFAULTING ---------" << endl;
+		cout << "--------- SETTINGS FILE NOT LOADED, DEFAULTING: SENDER IP: LOCALHOST - 12000 " << endl;
 	}
 
 	// LOAD SETTINGS -------------- END
@@ -29,6 +29,8 @@ void SceneManager::setup(){
 	loadContent(clientID);
 
 	compasSelector.setup(clientID);
+
+	//finalProbability = 0;
 
 	// SET LAYERS
 	for (int i = 0; i < 4; i++)
@@ -144,20 +146,13 @@ void SceneManager::update(){
 		ofColor(255);
 		videoDidactico.update();
 		videoDidactico.draw(0, 0, stateLayers[VIDEO_EXPLAIN].getWidth(), stateLayers[VIDEO_EXPLAIN].getHeight());
-		
-		/*
-		if (videoDidactico.getIsMovieDone() && !videoDidactico.isPaused()){
-			videoDidactico.setPaused(true);
-			setState(EXECUTION);
-		}
-		*/
 
 		if (videoDidactico.getPosition() > 0.2){
 			ofSetColor(100);
 			font.drawString("Probabilidad de la secuencia elegida: ", 220, 740);
-			font.drawString(ofToString(randomNumber) + " en 45.949.729.863.572.161", 240, 790);
+			//font.drawString(ofToString(finalProbability) + " en 45.949.729.863.572.161", 240, 790);
+			font.drawString("1 en 45.949.729.863.572.161", 260, 790);
 		}
-		
 		stateLayers[VIDEO_EXPLAIN].end();
 
 	}
@@ -228,7 +223,7 @@ void SceneManager::checkNetMessages(){
 		ofxOscMessage m;
 		netReciever.getNextMessage(&m);
 
-		cout << "RECEIVED MESSAGE WITH ADDRESS: " << m.getAddress() << endl;
+		cout << "MSG RECEIVED -> ADDRESS: " << m.getAddress() << endl;
 
 		if (m.getAddress() == "/goToState"){
 			int incomingState = m.getArgAsInt32(0);
@@ -244,6 +239,13 @@ void SceneManager::checkNetMessages(){
 				atPreSelection = false;
 			}
 		}
+
+		/*
+		if (m.getAddress() == "/probability"){
+			finalProbability = m.getArgAsInt32(0);
+			cout << "USER PROBABILITY: " << ofToString(finalProbability) << endl;
+		}
+		*/
 
 		/*
 		if (m.getAddress() == "/activeColumn"){
@@ -291,7 +293,13 @@ void SceneManager::setState(int state){
 		//partituraRecorrida.play();
 		playHeadAnimation.setPercentDone(0.0);
 		playHeadAnimation.reset(0.0);
-		playHeadAnimation.animateTo(1.0);
+
+		if(clientID == 0){
+			playHeadAnimation.animateTo(1.0);
+		} else {
+			playHeadAnimation.animateToAfterDelay(1.0, playHeadAnimation.getDuration());
+		}
+		
 		
 	}
 

@@ -93,7 +93,7 @@ void CompasSelector::reset(){
 
 	for (int i = 0; i < COLUMNS; i++)
 	{
-		selectedCompases[i] = -1;
+		selectedCompases[i] = 50;
 		//selectedCompasesPos[i] = ofPoint(buttons[i].x, buttons[i].y);
 		
 	}

@@ -69,6 +69,7 @@ public:
 
 	ofTrueTypeFont font;
 	int randomNumber;
+	//int finalProbability; // SERVER CALCULATES (USING ALL 16 COMPASES) AND SENDS BACK TO CLIENTS
 
 	ofImage partituraFinal;
 	ofImage playHeadImage;
