@@ -40,6 +40,7 @@ public:
 
 	int clientID; // WHICH USER SCREEN IS IT (DETERMINES GRID COMPASES AND IT'S BACKGROUND IMAGE)
 	void setClientID(int id);
+	void loadSettings();
 	void loadContent(int client);
 
 	CompasSelector compasSelector;
@@ -58,20 +59,20 @@ public:
 	ofVideoPlayer welcomeVideo;
 	ofImage buttonPressed;
 
-	//ofImage splashScreen;
 	ofImage grillaCompases;
 	ofImage grillaPreBox;
 	ofImage grillaPostBox;
 	
 
 	ofVideoPlayer videoDidactico;
-	//ofVideoPlayer partituraRecorrida;
+	ofVideoPlayer partituraFinal;
 
 	ofTrueTypeFont font;
-	int randomNumber;
+	//int randomNumber;
 	//int finalProbability; // SERVER CALCULATES (USING ALL 16 COMPASES) AND SENDS BACK TO CLIENTS
 
-	ofImage partituraFinal;
+	//ofImage partituraFinal;
+	
 	ofImage playHeadImage;
 	ofxAnimatableFloat playHeadAnimation;
 	ofImage returnButton;

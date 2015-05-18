@@ -2,6 +2,38 @@
 
 void SceneManager::setup(){
 	
+	loadSettings();
+	loadContent(clientID);
+	compasSelector.setup(clientID);
+
+	//finalProbability = 0;
+
+	// SET LAYERS
+	for (int i = 0; i < 4; i++)
+	{
+		stateLayers[i].allocate(ofGetWindowWidth(), ofGetWindowHeight(), GL_RGB);
+		stateLayers[i].begin();
+		ofClear(0);
+		stateLayers[i].end();
+	}
+
+	layerTransition.setDuration(1.0);
+	layerTransition.setPercentDone(0.0);
+	layerTransition.reset(0.0);
+	layerTransition.setCurve(EASE_IN_EASE_OUT);
+
+	playHeadAnimation.setDuration(14.0); // 28 secs / 2
+	playHeadAnimation.setPercentDone(0.0);
+	playHeadAnimation.reset(0.0);
+	playHeadAnimation.setCurve(LINEAR);
+
+	setState(0);
+
+
+}
+
+void SceneManager::loadSettings(){
+
 	// LOAD SETTINGS -------------- BEGIN
 	if (settings.loadFile("settings.xml"))
 	{
@@ -26,42 +58,14 @@ void SceneManager::setup(){
 
 	// LOAD SETTINGS -------------- END
 
-	loadContent(clientID);
-
-	compasSelector.setup(clientID);
-
-	//finalProbability = 0;
-
-	// SET LAYERS
-	for (int i = 0; i < 4; i++)
-	{
-		stateLayers[i].allocate(ofGetWindowWidth(), ofGetWindowHeight(), GL_RGB);
-		stateLayers[i].begin();
-		ofClear(0);
-		stateLayers[i].end();
-	}
-
-	layerTransition.setDuration(1.0);
-	layerTransition.setPercentDone(0.0);
-	layerTransition.reset(0.0);
-	layerTransition.setCurve(EASE_IN_EASE_OUT);
-
-	playHeadAnimation.setDuration(35.0);
-	playHeadAnimation.setPercentDone(0.0);
-	playHeadAnimation.reset(0.0);
-	playHeadAnimation.setCurve(LINEAR);
-
-	setState(0);
-
-
 }
 
 void SceneManager::loadContent(int client){
 
-	//splashScreen.loadImage("images/splashScreen.png");
-
 	welcomeVideo.loadMovie("videos/1 - SCREENSAVER.mov");
+	welcomeVideo.play();
 	welcomeVideo.setPaused(true);
+
 	buttonPressed.loadImage("images/welcomeButton.png");
 
 	videoDidactico.loadMovie("videos/3 - ANIMACION.mov");
@@ -70,21 +74,23 @@ void SceneManager::loadContent(int client){
 	videoDidactico.setPaused(true);
 	
 
-	//partituraRecorrida.loadMovie("videos/4 - EJECUCION.mov");
-	//partituraRecorrida.setPaused(true);
+	partituraFinal.loadMovie("videos/4 - PARTITURA.mov");
+	partituraFinal.setLoopState(OF_LOOP_NORMAL);
+	partituraFinal.play();
+	partituraFinal.setPaused(true);
 
 	string grilla = "images/grilla_" + ofToString(client) + ".jpg";
 	grillaCompases.loadImage(grilla);
 
 	if (clientID == 0){
-		grillaPreBox.loadImage("images/SelectionPreBox_A.jpg");
+		grillaPreBox.loadImage("images/SelectionPreBox_A.png");
 	}
 	else {
-		grillaPreBox.loadImage("images/SelectionPreBox_B.jpg");
+		grillaPreBox.loadImage("images/SelectionPreBox_B.png");
 	}
-	grillaPostBox.loadImage("images/SelectionPostBox.jpg");
+	grillaPostBox.loadImage("images/SelectionPostBox.png");
 
-	partituraFinal.loadImage("images/partitura.jpg");
+	//partituraFinal.loadImage("images/partitura.jpg");
 	playHeadImage.loadImage("images/playHead.png");
 	returnButton.loadImage("images/returnButton.png");
 
@@ -96,9 +102,7 @@ void SceneManager::update(){
 
 	checkNetMessages();
 	layerTransition.update(1.0 / ofGetFrameRate());
-
 	
-
 	// RENDER ONLY ACTUAL AND PREVIOUS LAYERS (UNTIL TRANSITION IS FINISHED) (NOT STOPPING VIDEO)
 	ofSetColor(255);
 
@@ -162,26 +166,31 @@ void SceneManager::update(){
 		ofBackground(0);
 		
 		ofColor(255);
+		partituraFinal.update();
 		partituraFinal.draw(0, 0);
 
+		ofPoint partituraAnchor = ofPoint(135,450);
+
 		// DRAW PARTITURA COMPASES FROM CompasButtons IMAGES
-		int imageWidth = 100;
+		int imageWidth = 205;
 		for (int i = 0; i < 8; i++)
 		{
-			compasSelector.getButtonImage(i).draw(imageWidth * i, 0);
+			compasSelector.getButtonImage(i).draw(partituraAnchor.x + (imageWidth * i), partituraAnchor.y - 30, imageWidth - 2, 75);
 		}
 
 		// PLAYHEAD ANIMATION - BEGIN ---------------------------------
 		playHeadAnimation.update(1.0 / ofGetFrameRate());
 
-		float totalPartituraLength = 3350;
-		float playHeadX = 40 + (totalPartituraLength * playHeadAnimation.getCurrentValue()); // initOffset + (totalPartituraLength * anim)
-		float playHeadY = 300;
+		float totalPartituraLength = 1660;
+		float playHeadX = 60 + (totalPartituraLength * playHeadAnimation.getCurrentValue()); // initOffset + (totalPartituraLength * anim)
+		float playHeadY = 380;
 
+		/*
 		if (playHeadAnimation.getCurrentValue() > 0.5){
 			playHeadY = 550;
 			playHeadX -= totalPartituraLength * 0.5;
 		}
+		*/
 
 		//cout << ofToString(playHeadAnimation.getCurrentValue()) << endl;
 
@@ -269,11 +278,15 @@ void SceneManager::setState(int state){
 
 	if (sceneState == SCREENSAVER)
 	{
-		welcomeVideo.play();
+		partituraFinal.setPaused(true);
+
+		welcomeVideo.setFrame(0);
+		welcomeVideo.setPaused(false);
 	}
 
 	else if (sceneState == SELECTION)
 	{
+		welcomeVideo.setPaused(true);
 		compasSelector.reset();
 
 		atPreSelection = true;
@@ -284,13 +297,19 @@ void SceneManager::setState(int state){
 	{
 		videoDidactico.setFrame(0);
 		videoDidactico.setPaused(false);
+		//videoDidactico.setFrame(0);
+		//videoDidactico.play();
 
-		randomNumber = int(ofRandom(100, 1000));
+		//randomNumber = int(ofRandom(100, 1000));
 		
 	}
 	else if (sceneState == EXECUTION)
 	{
-		//partituraRecorrida.play();
+		videoDidactico.setPaused(true);
+
+		partituraFinal.setFrame(0);
+		partituraFinal.setPaused(false);
+
 		playHeadAnimation.setPercentDone(0.0);
 		playHeadAnimation.reset(0.0);
 
