@@ -76,6 +76,7 @@ public:
 	ofImage playHeadImage;
 	ofxAnimatableFloat playHeadAnimation;
 	ofImage returnButton;
+	bool enableRestart;
 
 	void setState(int state);
 

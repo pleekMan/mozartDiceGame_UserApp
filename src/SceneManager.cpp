@@ -29,7 +29,7 @@ void SceneManager::setup(){
 
 	setState(0);
 
-
+	enableRestart = true;
 }
 
 void SceneManager::loadSettings(){
@@ -67,8 +67,9 @@ void SceneManager::loadContent(int client){
 	welcomeVideo.setPaused(true);
 
 	buttonPressed.loadImage("images/welcomeButton.png");
-
-	videoDidactico.loadMovie("videos/3 - ANIMACION.mov");
+	
+	string animetaPorClient = "videos/3 - ANIMACION_client-" + ofToString(clientID) + ".mov";
+	videoDidactico.loadMovie(animetaPorClient);
 	videoDidactico.setLoopState(OF_LOOP_NONE);
 	videoDidactico.play();
 	videoDidactico.setPaused(true);
@@ -151,17 +152,20 @@ void SceneManager::update(){
 		videoDidactico.update();
 		videoDidactico.draw(0, 0, stateLayers[VIDEO_EXPLAIN].getWidth(), stateLayers[VIDEO_EXPLAIN].getHeight());
 
-		if (videoDidactico.getPosition() > 0.2){
+		/*
+		if (videoDidactico.getPosition() > 0.35){
 			ofSetColor(100);
 			font.drawString("Probabilidad de la secuencia elegida: ", 220, 740);
 			//font.drawString(ofToString(finalProbability) + " en 45.949.729.863.572.161", 240, 790);
 			font.drawString("1 en 45.949.729.863.572.161", 260, 790);
 		}
+		*/
 		stateLayers[VIDEO_EXPLAIN].end();
 
 	}
 
 	if (sceneState == EXECUTION || (prevSceneState == EXECUTION && layerTransition.isAnimating())){
+		
 		stateLayers[EXECUTION].begin();
 		ofBackground(0);
 		
@@ -170,19 +174,19 @@ void SceneManager::update(){
 		partituraFinal.draw(0, 0);
 
 		ofPoint partituraAnchor = ofPoint(135,450);
-
+		
 		// DRAW PARTITURA COMPASES FROM CompasButtons IMAGES
 		int imageWidth = 205;
 		for (int i = 0; i < 8; i++)
 		{
-			compasSelector.getButtonImage(i).draw(partituraAnchor.x + (imageWidth * i), partituraAnchor.y - 30, imageWidth - 2, 75);
+			compasSelector.getButtonImage(i).draw(partituraAnchor.x + (imageWidth * i), partituraAnchor.y + 30, imageWidth - 2, 75);
 		}
 
 		// PLAYHEAD ANIMATION - BEGIN ---------------------------------
 		playHeadAnimation.update(1.0 / ofGetFrameRate());
 
 		float totalPartituraLength = 1660;
-		float playHeadX = 60 + (totalPartituraLength * playHeadAnimation.getCurrentValue()); // initOffset + (totalPartituraLength * anim)
+		float playHeadX = 30 + (totalPartituraLength * playHeadAnimation.getCurrentValue()); // initOffset + (totalPartituraLength * anim)
 		float playHeadY = 380;
 
 		/*
@@ -198,8 +202,9 @@ void SceneManager::update(){
 
 		// PLAYHEAD ANIMATION - END ---------------------------------
 
-		returnButton.draw(0, 0);
-
+		if(enableRestart){
+			returnButton.draw(0, 0);
+		}
 
 		stateLayers[EXECUTION].end();
 	}
@@ -263,6 +268,12 @@ void SceneManager::checkNetMessages(){
 			compasSelector.setActiveColumn(m.getArgAsInt32(0));
 		}
 		*/
+
+		if (sceneState == EXECUTION){
+			if (m.getAddress() == "/enableRestart"){
+				enableRestart = true;
+			}
+		}
 	}
 
 }
@@ -318,6 +329,8 @@ void SceneManager::setState(int state){
 		} else {
 			playHeadAnimation.animateToAfterDelay(1.0, playHeadAnimation.getDuration());
 		}
+
+		enableRestart = false;
 		
 		
 	}
@@ -409,10 +422,14 @@ void SceneManager::mousePressed(int x, int y, int button)
 	}
 	if (sceneState == EXECUTION){
 		// SEND -> SELECTED COMPASS
+		if(enableRestart){
 			ofxOscMessage sendCompas;
 			sendCompas.setAddress("/goToState");
 			sendCompas.addIntArg(0);
 			netSender.sendMessage(sendCompas);
+
+			enableRestart = false;
+		}
 	}
 	
 
