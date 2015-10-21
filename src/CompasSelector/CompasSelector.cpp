@@ -5,6 +5,7 @@ void CompasSelector::setup(int clientID){
 	createGrid(clientID);
 
 	selectionBox.loadImage("images/selectionBox.png");
+	//inactiveColumnOverlay.loadImage("images/inactiveColumn.png");
 
 	reset();
 }
@@ -12,11 +13,11 @@ void CompasSelector::setup(int clientID){
 void CompasSelector::createGrid(int clientID){
 
 	// POSITION BUTTONS
-	float initPosX = 156;
+	float initPosX = clientID == 0 ? 452 : 37;
 	float posX = initPosX;
-	float posY = 190;
-	float columnSpace = 35;
-	buttonSize = ofPoint(180, 70.2);
+	float posY = 110;
+	float columnSpace = 18;
+	buttonSize = ofPoint(163,85);
 
 	// CREATING BUTTONS AND LOADING IMAGES FOR THIS GRID
 	// GET THE INDEX OUT OF A PRERENDERED INDEX FILE
@@ -111,8 +112,8 @@ void CompasSelector::render(){
 	
 	// DRAW OVER INACTIVE COLUMNS
 	//ofSetColor(130, 0, 130, 75);
-	ofSetColor(0, 75);
-	ofFill();
+	//ofSetColor(0, 75);
+	//ofFill();
 	
 	/*
 	// DRAWING COLUMNS HIGHLIGHTERS (TOP AND BOTTOM SHADOW BOXES)
@@ -130,8 +131,21 @@ void CompasSelector::render(){
 	}
 	*/
 	
+	//ofSetColor(255);
+	//selectionBox.draw(156 + activeColumn * (buttons[0].width + 35) - 47, 0);
+
+	// DRAW INACTIVE COLUMN OVERLAY
+	/*
 	ofSetColor(255);
-	selectionBox.draw(156 + activeColumn * (buttons[0].width + 35) - 47, 0);
+	for (int i = 0; i < COLUMNS; i++)
+	{
+		if (i != activeColumn){
+			int xPos = buttons[i].x;
+			inactiveColumnOverlay.draw(xPos,0);
+		}
+
+	}
+	*/
 
 	ofPopStyle();
 

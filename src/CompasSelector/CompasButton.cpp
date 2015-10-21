@@ -10,6 +10,9 @@ void CompasButton::setup(float posX, float posY, string imagePath, int _id){
 	y = posY;
 	//image.loadImage("images/buttons/button" + ofToString)
 	image.loadImage(imagePath);
+	overlayInactive.loadImage("images/button_inactive.png");
+	overlaySelected.loadImage("images/button_selected.png");
+
 
 	width = 2;
 	height = 2;
@@ -23,30 +26,30 @@ void CompasButton::update(){
 void CompasButton::render(){
 
 	ofSetColor(255);
-	image.draw(x, y);
+	//ofRect(x,y,163,81);
+	
 
+	/*
 	if (!isSelected && !active){
 		ofSetColor(100,0,100, 100);
-		ofFill();
-	}
-	else {
-		ofSetColor(0, 0);
-		ofFill();
-	}
-	
-	
-	//ofNoFill();
-	/*
-	if (active)
-	{
 		ofNoFill();
 	}
 	else {
-		ofFill();
+		ofSetColor(0, 0);
+		ofNoFill();
 	}
 	*/
 
-	ofRect(x, y, width, height);
+	if(isSelected){
+		overlaySelected.draw(x,y,163,85);
+	} else if(!active){
+		overlayInactive.draw(x,y,163,85);
+	}
+	
+	ofSetColor(255);
+	image.draw(x, y, image.getWidth() * 0.5, image.getHeight() * 0.5);
+
+	//ofRect(x, y, width, height);
 }
 
 void CompasButton::setPosition(float _x, float _y){
@@ -61,6 +64,8 @@ void CompasButton::setSize(float _x, float _y){
 
 void CompasButton::setImage(string path){
 	image.loadImage(path);
+	overlayInactive.loadImage("images/button_inactive.png");
+	overlaySelected.loadImage("images/button_selected.png");
 }
 
 void CompasButton::setActive(bool state){

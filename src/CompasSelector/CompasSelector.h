@@ -26,6 +26,7 @@ public:
 	int activeColumn;
 	int selectedCompases[COLUMNS];
 	ofImage selectionBox;
+	//ofImage inactiveColumnOverlay;
 	//ofPoint selectedCompasesPos[COLUMNS];
 
 	int getSelectedButton(int x, int y); // NOT USED

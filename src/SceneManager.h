@@ -56,7 +56,8 @@ public:
 
 	ofxAnimatableFloat layerTransition;
 
-	ofVideoPlayer welcomeVideo;
+	ofImage welcomeScreen;
+	//ofVideoPlayer welcomeVideo;
 	ofImage buttonPressed;
 
 	ofImage grillaCompases;
@@ -65,7 +66,8 @@ public:
 	
 
 	ofVideoPlayer videoDidactico;
-	ofVideoPlayer partituraFinal;
+	//ofVideoPlayer partituraFinal;
+	ofImage ejecucionBack;
 
 	ofTrueTypeFont font;
 	//int randomNumber;

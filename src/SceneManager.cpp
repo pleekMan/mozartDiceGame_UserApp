@@ -62,9 +62,13 @@ void SceneManager::loadSettings(){
 
 void SceneManager::loadContent(int client){
 
+	/*
 	welcomeVideo.loadMovie("videos/1 - SCREENSAVER.mov");
 	welcomeVideo.play();
 	welcomeVideo.setPaused(true);
+	*/
+
+	welcomeScreen.loadImage("images/splashScreen.png");
 
 	buttonPressed.loadImage("images/welcomeButton.png");
 	
@@ -74,13 +78,17 @@ void SceneManager::loadContent(int client){
 	videoDidactico.play();
 	videoDidactico.setPaused(true);
 	
-
+	/*
 	partituraFinal.loadMovie("videos/4 - PARTITURA.mov");
 	partituraFinal.setLoopState(OF_LOOP_NORMAL);
 	partituraFinal.play();
 	partituraFinal.setPaused(true);
+	*/
 
-	string grilla = "images/grilla_" + ofToString(client) + ".jpg";
+	string ejecucionBackImage = "images/ejecucionBack_" + ofToString(client) + ".png";
+	ejecucionBack.loadImage(ejecucionBackImage);
+
+	string grilla = "images/grilla_" + ofToString(client) + ".png";
 	grillaCompases.loadImage(grilla);
 
 	if (clientID == 0){
@@ -110,13 +118,14 @@ void SceneManager::update(){
 	if (sceneState == SCREENSAVER || (prevSceneState == SCREENSAVER && layerTransition.isAnimating())){
 		stateLayers[SCREENSAVER].begin();
 		ofBackground(0);
-		//splashScreen.draw(0, 0, stateLayers[SCREENSAVER].getWidth(), stateLayers[SCREENSAVER].getHeight());
+		
+		welcomeScreen.draw(0, 0, stateLayers[SCREENSAVER].getWidth(), stateLayers[SCREENSAVER].getHeight());
 
-		welcomeVideo.update();
-		welcomeVideo.draw(0, 0, stateLayers[SCREENSAVER].getWidth(), stateLayers[SCREENSAVER].getHeight());
+		//welcomeVideo.update();
+		//welcomeVideo.draw(0, 0, stateLayers[SCREENSAVER].getWidth(), stateLayers[SCREENSAVER].getHeight());
 
 		if (layerTransition.isAnimating() && sceneState == SELECTION){
-		buttonPressed.draw(494, 793);
+		buttonPressed.draw(1048,701);
 		}
 
 		stateLayers[SCREENSAVER].end();
@@ -170,8 +179,9 @@ void SceneManager::update(){
 		ofBackground(0);
 		
 		ofColor(255);
-		partituraFinal.update();
-		partituraFinal.draw(0, 0);
+		//partituraFinal.update();
+		//partituraFinal.draw(0, 0);
+		ejecucionBack.draw(0,0);
 
 		ofPoint partituraAnchor = ofPoint(135,450);
 		
@@ -289,15 +299,15 @@ void SceneManager::setState(int state){
 
 	if (sceneState == SCREENSAVER)
 	{
-		partituraFinal.setPaused(true);
+		//partituraFinal.setPaused(true);
 
-		welcomeVideo.setFrame(0);
-		welcomeVideo.setPaused(false);
+		//welcomeVideo.setFrame(0);
+		//welcomeVideo.setPaused(false);
 	}
 
 	else if (sceneState == SELECTION)
 	{
-		welcomeVideo.setPaused(true);
+		//welcomeVideo.setPaused(true);
 		compasSelector.reset();
 
 		atPreSelection = true;
@@ -318,8 +328,8 @@ void SceneManager::setState(int state){
 	{
 		videoDidactico.setPaused(true);
 
-		partituraFinal.setFrame(0);
-		partituraFinal.setPaused(false);
+		//partituraFinal.setFrame(0);
+		//partituraFinal.setPaused(false);
 
 		playHeadAnimation.setPercentDone(0.0);
 		playHeadAnimation.reset(0.0);
@@ -348,7 +358,7 @@ void SceneManager::mousePressed(int x, int y, int button)
 	
 	if (sceneState == SCREENSAVER)
 	{
-		ofRectangle buttonArea = ofRectangle(ofPoint(500, 780), 900, 300);
+		ofRectangle buttonArea = ofRectangle(ofPoint(1048, 701), buttonPressed.getWidth(), buttonPressed.getHeight());
 		if (buttonArea.inside(x, y))
 		{
 			//setState(SELECTION);
@@ -453,6 +463,7 @@ void SceneManager::keyPressed(int key){
 	}
 	if (key == '1'){
 		setState(SELECTION);
+	
 	}
 	if (key == '2'){
 		setState(VIDEO_EXPLAIN);

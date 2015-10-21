@@ -17,6 +17,8 @@ public:
 	bool isSelected;
 
 	ofImage image;
+	ofImage overlayInactive;
+	ofImage overlaySelected;
 
 	void setPosition(float _x, float _y);
 	void setSize(float _x, float _y);
