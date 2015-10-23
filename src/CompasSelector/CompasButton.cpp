@@ -48,8 +48,8 @@ void CompasButton::render(){
 		overlayInactive.draw(x,y,163,85);
 	}
 	
-	ofSetColor(255);
-	image.draw(x, y, image.getWidth() * 0.5, image.getHeight() * 0.5);
+	//ofSetColor(255);
+	//image.draw(x, y, image.getWidth() * 0.5, image.getHeight() * 0.5);
 
 	//ofRect(x, y, width, height);
 }
