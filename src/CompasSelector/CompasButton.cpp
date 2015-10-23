@@ -41,7 +41,9 @@ void CompasButton::render(){
 	*/
 
 	if(isSelected){
+		ofEnableBlendMode(OF_BLENDMODE_ADD);
 		overlaySelected.draw(x,y,163,85);
+		ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 	} else if(!active){
 		overlayInactive.draw(x,y,163,85);
 	}

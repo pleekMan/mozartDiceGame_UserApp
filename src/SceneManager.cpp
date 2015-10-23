@@ -21,11 +21,25 @@ void SceneManager::setup(){
 	layerTransition.setPercentDone(0.0);
 	layerTransition.reset(0.0);
 	layerTransition.setCurve(EASE_IN_EASE_OUT);
-
+	
+	
 	playHeadAnimation.setDuration(14.0); // 28 secs / 2
 	playHeadAnimation.setPercentDone(0.0);
 	playHeadAnimation.reset(0.0);
 	playHeadAnimation.setCurve(LINEAR);
+	
+	int colorsAlpha = 200;
+	partituraColors[0] = ofColor(64,67,122,colorsAlpha);
+	partituraColors[1] = ofColor(70,137,139,colorsAlpha);
+	partituraColors[2] = ofColor(70,153,110, colorsAlpha);
+	partituraColors[3] = ofColor(88,163,73, colorsAlpha);
+	partituraColors[4] = ofColor(180,177,78, colorsAlpha);
+	partituraColors[5] = ofColor(188,123,81, colorsAlpha);
+	partituraColors[6] = ofColor(195,83,83, colorsAlpha);
+	partituraColors[7] = ofColor(185,82,160, colorsAlpha);
+
+	atEjecucionCompas = 0;
+
 
 	setState(0);
 
@@ -47,6 +61,8 @@ void SceneManager::loadSettings(){
 		netReciever.setup(clientsPort);
 	}
 	else {
+		// DEFAULT TO:
+
 		clientID = 0;
 
 		netSender.setup("localhost", 12000);
@@ -85,23 +101,24 @@ void SceneManager::loadContent(int client){
 	partituraFinal.setPaused(true);
 	*/
 
-	string ejecucionBackImage = "images/ejecucionBack_" + ofToString(client) + ".png";
+	string ejecucionBackImage = "images/ejecucionBack_client-" + ofToString(client) + ".png";
 	ejecucionBack.loadImage(ejecucionBackImage);
+	partituraShadow.loadImage("images/partituraFinalShadow.png");
 
 	string grilla = "images/grilla_" + ofToString(client) + ".png";
 	grillaCompases.loadImage(grilla);
 
 	if (clientID == 0){
-		grillaPreBox.loadImage("images/SelectionPreBox_A.png");
+		grillaPreBox.loadImage("images/SelectionPreBox_client-0.png");
 	}
 	else {
-		grillaPreBox.loadImage("images/SelectionPreBox_B.png");
+		grillaPreBox.loadImage("images/SelectionPreBox_client-1.png");
 	}
 	grillaPostBox.loadImage("images/SelectionPostBox.png");
 
 	//partituraFinal.loadImage("images/partitura.jpg");
-	playHeadImage.loadImage("images/playHead.png");
-	returnButton.loadImage("images/returnButton.png");
+	//playHeadImage.loadImage("images/playHead.png");
+	returnButton.loadImage("images/returnButton.jpg");
 
 	font.loadFont("Conduit ITC Bold.ttf", 30, true, false, false, 0.0, 0.0);
 
@@ -125,7 +142,7 @@ void SceneManager::update(){
 		//welcomeVideo.draw(0, 0, stateLayers[SCREENSAVER].getWidth(), stateLayers[SCREENSAVER].getHeight());
 
 		if (layerTransition.isAnimating() && sceneState == SELECTION){
-		buttonPressed.draw(1048,701);
+		buttonPressed.draw(1048,713);
 		}
 
 		stateLayers[SCREENSAVER].end();
@@ -183,39 +200,61 @@ void SceneManager::update(){
 		//partituraFinal.draw(0, 0);
 		ejecucionBack.draw(0,0);
 
-		ofPoint partituraAnchor = ofPoint(135,450);
+		ofPoint partituraAnchor = clientID == 0 ? ofPoint(96,534) : ofPoint(0,534);
+
+		playHeadAnimation.update(1.0 / ofGetFrameRate());
+
+		// DRAW COLOR RECTANGLES -- BEGIN
+		ofRectangle rectangleSize = ofRectangle(0,0,228,127);
+		atEjecucionCompas = floor((playHeadAnimation.getPercentDone() * 8));		
+		float rectPosX = partituraAnchor.x + (rectangleSize.getWidth() * atEjecucionCompas);
+
+		ofSetColor(partituraColors[atEjecucionCompas]);
+		ofFill();
+		ofRect(rectPosX, partituraAnchor.y,rectangleSize.getWidth(), rectangleSize.getHeight());
+
+		partituraShadow.draw(partituraAnchor);
+
+		// DRAW COLOR RECTANGLES -- END
+
+		ofSetColor(0,255,127);
+		ofDrawBitmapString("PlayHead at: " + ofToString(playHeadAnimation.getCurrentValue()) + " -- Compas: " + ofToString(atEjecucionCompas), 20,20);
+		
 		
 		// DRAW PARTITURA COMPASES FROM CompasButtons IMAGES
-		int imageWidth = 205;
-		for (int i = 0; i < 8; i++)
-		{
-			compasSelector.getButtonImage(i).draw(partituraAnchor.x + (imageWidth * i), partituraAnchor.y + 30, imageWidth - 2, 75);
+		//int imageWidth = 205;
+		for (int i = 0; i < 8; i++){
+			compasSelector.getButtonImage(i).draw(partituraAnchor.x + (rectangleSize.getWidth() * i), partituraAnchor.y + 10, compasSelector.getButtonImage(i).width * 1.2,  compasSelector.getButtonImage(i).height * 1.2);
 		}
 
+
+		/*
 		// PLAYHEAD ANIMATION - BEGIN ---------------------------------
-		playHeadAnimation.update(1.0 / ofGetFrameRate());
+		//playHeadAnimation.update(1.0 / ofGetFrameRate());
 
 		float totalPartituraLength = 1660;
 		float playHeadX = 30 + (totalPartituraLength * playHeadAnimation.getCurrentValue()); // initOffset + (totalPartituraLength * anim)
 		float playHeadY = 380;
 
-		/*
+		
 		if (playHeadAnimation.getCurrentValue() > 0.5){
 			playHeadY = 550;
 			playHeadX -= totalPartituraLength * 0.5;
 		}
-		*/
+		
 
 		//cout << ofToString(playHeadAnimation.getCurrentValue()) << endl;
 
-		playHeadImage.draw(playHeadX, playHeadY);
+		//playHeadImage.draw(playHeadX, playHeadY);
 
 		// PLAYHEAD ANIMATION - END ---------------------------------
 
-		if(enableRestart){
-			returnButton.draw(0, 0);
-		}
+		*/
 
+		if(enableRestart){
+			ofSetColor(255);
+			returnButton.draw(1508,722);
+		}
 		stateLayers[EXECUTION].end();
 	}
 
@@ -334,6 +373,8 @@ void SceneManager::setState(int state){
 		playHeadAnimation.setPercentDone(0.0);
 		playHeadAnimation.reset(0.0);
 
+		atEjecucionCompas = 0;
+
 		if(clientID == 0){
 			playHeadAnimation.animateTo(1.0);
 		} else {
@@ -394,6 +435,7 @@ void SceneManager::mousePressed(int x, int y, int button)
 			for (int i = 0; i < compasSelector.getColumnCount(); i++)
 			{
 				sendCompas.addIntArg(compasSelector.selectedCompases[i]);
+				cout << ofToString(compasSelector.selectedCompases[i]) + " | ";
 			}
 			netSender.sendMessage(sendCompas);
 			cout << "COMPASES SELECTED MESSAGE SENT" << endl;

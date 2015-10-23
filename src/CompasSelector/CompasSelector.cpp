@@ -21,7 +21,7 @@ void CompasSelector::createGrid(int clientID){
 
 	// CREATING BUTTONS AND LOADING IMAGES FOR THIS GRID
 	// GET THE INDEX OUT OF A PRERENDERED INDEX FILE
-	ofBuffer compasImageIndex = ofBufferFromFile("grillaMozart.txt", true);
+	ofBuffer compasImageIndex = ofBufferFromFile("grillaMozart.txt", true); // 
 
 	for (int i = 0; i < COMPAS_COUNT; i++)
 	{
@@ -31,7 +31,7 @@ void CompasSelector::createGrid(int clientID){
 		//BUTTON LOADING DEPENDS ON THE CLIENT ID (TO AVOID LOADING UNNECESARY BUTTON (DOUBLE));
 		if (clientID == 0){
 			// GET NUM AS STRINGS FROM FILE
-			string lineInBuffer = "images/compases/" + compasImageIndex.getNextLine() + ".jpg";
+			string lineInBuffer = "images/compases/" + compasImageIndex.getNextLine() + ".png";
 			buttons[i].setImage(lineInBuffer);
 			cout << " : " << lineInBuffer << endl;
 
@@ -53,7 +53,7 @@ void CompasSelector::createGrid(int clientID){
 				}
 			}
 
-			string lineInBuffer = "images/compases/" + compasImageIndex.getNextLine() + ".jpg";
+			string lineInBuffer = "images/compases/" + compasImageIndex.getNextLine() + ".png";
 			buttons[i].setImage(lineInBuffer);
 			cout << " : " << lineInBuffer << endl;
 
