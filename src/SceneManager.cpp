@@ -195,7 +195,7 @@ void SceneManager::update(){
 		stateLayers[EXECUTION].begin();
 		ofBackground(0);
 		
-		ofColor(255);
+		ofSetColor(255);
 		//partituraFinal.update();
 		//partituraFinal.draw(0, 0);
 		ejecucionBack.draw(0,0);
@@ -213,16 +213,18 @@ void SceneManager::update(){
 		ofFill();
 		ofRect(rectPosX, partituraAnchor.y,rectangleSize.getWidth(), rectangleSize.getHeight());
 
+		ofSetColor(255);
 		partituraShadow.draw(partituraAnchor);
 
 		// DRAW COLOR RECTANGLES -- END
 
-		ofSetColor(0,255,127);
-		ofDrawBitmapString("PlayHead at: " + ofToString(playHeadAnimation.getCurrentValue()) + " -- Compas: " + ofToString(atEjecucionCompas), 20,20);
+		//ofSetColor(0,255,127);
+		//ofDrawBitmapString("PlayHead at: " + ofToString(playHeadAnimation.getCurrentValue()) + " -- Compas: " + ofToString(atEjecucionCompas), 20,20);
 		
 		
 		// DRAW PARTITURA COMPASES FROM CompasButtons IMAGES
 		//int imageWidth = 205;
+		ofSetColor(255);
 		for (int i = 0; i < 8; i++){
 			compasSelector.getButtonImage(i).draw(partituraAnchor.x + (rectangleSize.getWidth() * i), partituraAnchor.y + 10, compasSelector.getButtonImage(i).width * 1.2,  compasSelector.getButtonImage(i).height * 1.2);
 		}
@@ -252,7 +254,6 @@ void SceneManager::update(){
 		*/
 
 		if(enableRestart){
-			ofSetColor(255);
 			returnButton.draw(1508,722);
 		}
 		stateLayers[EXECUTION].end();

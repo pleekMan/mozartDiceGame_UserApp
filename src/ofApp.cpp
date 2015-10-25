@@ -8,6 +8,7 @@ void ofApp::setup(){
 	ofSetFrameRate(30);
 	//ofBlendMode(OF_BLENDMODE_ADD);
 	ofBackground(0);
+	ofHideCursor();
 
 	sceneManager.setup();
 }
@@ -24,8 +25,8 @@ void ofApp::draw(){
 	ofBackground(0);
 	sceneManager.render();
 
-	ofSetColor(255, 0, 0);
-	ofDrawBitmapString(ofToString(ofGetMouseX()) + " | " + ofToString(ofGetMouseY()), ofGetMouseX() + 10, ofGetMouseY() - 10);
+	//ofSetColor(255, 0, 0);
+	//ofDrawBitmapString(ofToString(ofGetMouseX()) + " | " + ofToString(ofGetMouseY()), ofGetMouseX() + 10, ofGetMouseY() - 10);
 
 }
 
